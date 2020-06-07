@@ -4,7 +4,8 @@ A repo to experiment with C and Go interop. Heavily uses [CGo](https://blog.gola
 
 ## Memory Allocation Test
 
-Currently the only supported test. Allocates memory using `calloc` or Go assigment for a specified number of iterations.
+Currently the only supported test. Allocates memory using `calloc` or Go assigment for a specified number of iterations. 
+Note: Go formats Durations intelligently, so it will change the units as appropriate. The C Malloc results will always be in ms.
 
 ```
 neel@neel-UX305FA:~/go/src/cgo-test$ ./cgo-test 
