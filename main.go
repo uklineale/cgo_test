@@ -7,7 +7,7 @@ import "C"
 import (
 	"log"
 	"unsafe"
-	"math"
+	"flag"
 	"time"
 )
 
@@ -15,29 +15,30 @@ const SIZE = 1024
 const MILLISECONDS = 1000
 
 func main() {
-	var iters int = int(1 * math.Pow(10, 6))
-
+	iters := flag.Int("iterations", 1000000, "number of memory allocations iterations")
 	
-	cMalloc(iters)
-	cGoMalloc(iters)
-	goAssign(iters)
+	flag.Parse()
+
+	cMalloc(*iters)
+	cGoMalloc(*iters)
+	goAssign(*iters)
 }
 
 func timeTrack(start time.Time, name string) {
 	elapsed := time.Since(start);
-	log.Printf("%s took %15s", name, elapsed);
+	log.Printf("%s took %10s", name, elapsed);
 }
 
 func cMalloc(iterations int) {
 	iters := C.int(iterations)
 	duration := float64(C.allocate(iters)) // in seconds
-	log.Printf("C malloc took %15fms\n", duration * MILLISECONDS)
+	log.Printf("C malloc took %10fms\n", duration * MILLISECONDS)
 }
 
 func cGoMalloc(iterations int) {
 	defer timeTrack(time.Now(), "cGoMalloc")
 	for i := 0; i < iterations; i++ {
-		ptr := C.malloc(C.sizeof_char * SIZE)
+		ptr := C.calloc(1 , C.sizeof_char * SIZE)
 		C.free(unsafe.Pointer(ptr))
 	}
 }
